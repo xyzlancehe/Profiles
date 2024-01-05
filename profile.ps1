@@ -42,8 +42,8 @@ function New-Link {
     }
 }
 
-Set-Alias -Force -Name ln -Value New-Link
-Set-Alias -Force -Name mklink -Value New-Link
+Set-Alias -Name ln -Value New-Link
+Set-Alias -Name mklink -Value New-Link
 #endregion
 
 #region quick source profile
@@ -56,7 +56,7 @@ function Invoke-CurrentUserProfile {
     }
 }
 
-New-Alias -Force -Name '...' -Value Invoke-CurrentUserProfile
+Set-Alias -Name '...' -Value Invoke-CurrentUserProfile
 #endregion
 
 #region custom prompt
