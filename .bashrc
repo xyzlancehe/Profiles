@@ -185,7 +185,16 @@ if [[ -n "$MSYSTEM" ]]; then
     PromptTermTitle="${MSYSTEM}: ${PromptWorkingDirectory}"
 fi
 
-export PS1="$(SetTitle "${PromptTermTitle}")${debian_chroot:+($debian_chroot)}${Color_LightYellow}Bash ${Style_Bold}${Color_Green}${PromptUserName}@${PromptHostName}${Style_Off}:${Style_Bold}${Color_Blue}${PromptWorkingDirectory}${MSYSTEM:+ ${Color_Magenta}${MSYSTEM} }${Style_Off}${PromptSymbol} "
+export PS1="${debian_chroot:+($debian_chroot)}${Color_LightYellow}Bash ${Style_Bold}${Color_Green}${PromptUserName}@${PromptHostName}${Style_Off}:${Style_Bold}${Color_Blue}${PromptWorkingDirectory}${MSYSTEM:+ ${Color_Magenta}${MSYSTEM} }${Style_Off}${PromptSymbol} "
+
+# cd with title
+TermUserName="${USER}"
+TermHostName="${HOSTNAME}"
+function cd() {
+    builtin cd "$@"
+    SetTitle "${TermUserName}@${TermHostName}: $(pwd)"
+}
+SetTitle "${TermUserName}@${TermHostName}: $(pwd)"
 
 # screen helpers
 function scr() {
@@ -244,7 +253,7 @@ function svr() {
 }
 
 function xpd() {
-    xpra start-desktop :111 --start=gnome-session --resize-display=1920x1080
+    xpra start-desktop :111 --start=gnome-session --resize-display=1920x1080 --system-tray=no
 }
 export DISPLAY=:111
 
