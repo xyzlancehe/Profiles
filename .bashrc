@@ -123,50 +123,102 @@ export PATH=$PATH:'~/bin'
 alias ...="source ~/.bashrc"
 
 # escaped control sequences
-export Style_Reset='\[\033[0m\]'       # reset
-export Style_Off='\[\033[0m\]'         # alias for reset
-export Style_Bold='\[\033[01m\]'       # bold
-export Style_Dim='\[\033[02m\]'        # dim
-export Style_Underlined='\[\033[04m\]' # underlined
-export Style_Blink='\[\033[05m\]'      # blink
-export Style_Reverse='\[\033[07m\]'    # reverse
-export Style_Hidden='\[\033[08m\]'     # hidden
+Style_Reset='\[\033[0m\]'       # reset
+Style_Off='\[\033[0m\]'         # alias for reset
+Style_Bold='\[\033[01m\]'       # bold
+Style_Dim='\[\033[02m\]'        # dim
+Style_Underlined='\[\033[04m\]' # underlined
+Style_Blink='\[\033[05m\]'      # blink
+Style_Reverse='\[\033[07m\]'    # reverse
+Style_Hidden='\[\033[08m\]'     # hidden
 
-export Color_Black='\[\033[30m\]'        # text color black
-export Color_Red='\[\033[31m\]'          # text color red
-export Color_Green='\[\033[32m\]'        # text color green
-export Color_Yellow='\[\033[33m\]'       # text color yellow
-export Color_Blue='\[\033[34m\]'         # text color blue
-export Color_Magenta='\[\033[35m\]'      # text color magenta
-export Color_Cyan='\[\033[36m\]'         # text color cyan
-export Color_LightGray='\[\033[37m\]'    # text color light gray
-export Color_DarkGray='\[\033[90m\]'     # text color dark gray
-export Color_LightRed='\[\033[91m\]'     # text color light red
-export Color_LightGreen='\[\033[92m\]'   # text color light green
-export Color_LightYellow='\[\033[93m\]'  # text color light yellow
-export Color_LightBlue='\[\033[94m\]'    # text color light blue
-export Color_LightMagenta='\[\033[95m\]' # text color light magenta
-export Color_LightCyan='\[\033[96m\]'    # text color light cyan
-export Color_White='\[\033[97m\]'        # text color white
+Color_Black='\[\033[30m\]'        # text color black
+Color_Red='\[\033[31m\]'          # text color red
+Color_Green='\[\033[32m\]'        # text color green
+Color_Yellow='\[\033[33m\]'       # text color yellow
+Color_Blue='\[\033[34m\]'         # text color blue
+Color_Magenta='\[\033[35m\]'      # text color magenta
+Color_Cyan='\[\033[36m\]'         # text color cyan
+Color_LightGray='\[\033[37m\]'    # text color light gray
+Color_DarkGray='\[\033[90m\]'     # text color dark gray
+Color_LightRed='\[\033[91m\]'     # text color light red
+Color_LightGreen='\[\033[92m\]'   # text color light green
+Color_LightYellow='\[\033[93m\]'  # text color light yellow
+Color_LightBlue='\[\033[94m\]'    # text color light blue
+Color_LightMagenta='\[\033[95m\]' # text color light magenta
+Color_LightCyan='\[\033[96m\]'    # text color light cyan
+Color_White='\[\033[97m\]'        # text color white
 
-export Background_Black='\[\033[40m\]'         # background color black
-export Background_Red='\[\033[41m\]'           # background color red
-export Background_Green='\[\033[42m\]'         # background color green
-export Background_Yellow='\[\033[43m\]'        # background color yellow
-export Background_Blue='\[\033[44m\]'          # background color blue
-export Background_Magenta='\[\033[45m\]'       # background color magenta
-export Background_Cyan='\[\033[46m\]'          # background color cyan
-export Background_LightGray='\[\033[47m\]'     # background color light gray
-export Background_DarkGray='\[\033[100m\]'     # background color dark gray
-export Background_LightRed='\[\033[101m\]'     # background color light red
-export Background_LightGreen='\[\033[102m\]'   # background color light green
-export Background_LightYellow='\[\033[103m\]'  # background color light yellow
-export Background_LightBlue='\[\033[104m\]'    # background color light blue
-export Background_LightMagenta='\[\033[105m\]' # background color light magenta
-export Background_LightCyan='\[\033[106m\]'    # background color light cyan
-export Background_White='\[\033[107m\]'        # background color white
+Background_Black='\[\033[40m\]'         # background color black
+Background_Red='\[\033[41m\]'           # background color red
+Background_Green='\[\033[42m\]'         # background color green
+Background_Yellow='\[\033[43m\]'        # background color yellow
+Background_Blue='\[\033[44m\]'          # background color blue
+Background_Magenta='\[\033[45m\]'       # background color magenta
+Background_Cyan='\[\033[46m\]'          # background color cyan
+Background_LightGray='\[\033[47m\]'     # background color light gray
+Background_DarkGray='\[\033[100m\]'     # background color dark gray
+Background_LightRed='\[\033[101m\]'     # background color light red
+Background_LightGreen='\[\033[102m\]'   # background color light green
+Background_LightYellow='\[\033[103m\]'  # background color light yellow
+Background_LightBlue='\[\033[104m\]'    # background color light blue
+Background_LightMagenta='\[\033[105m\]' # background color light magenta
+Background_LightCyan='\[\033[106m\]'    # background color light cyan
+Background_White='\[\033[107m\]'        # background color white
 
-function SetTitle() {
+function get_rainbow_text() {
+    local text="$1"
+    local wrap="${2:-1}"
+    local length=${#text}
+    local result=""
+    
+    # RGB values for the rainbow colors
+    local -a R=(255 255 255   0   0  75 148)
+    local -a G=(  0 127 255 255   0   0   0)
+    local -a B=(  0   0   0   0 255 130 211)
+
+    if [ "$length" -le 1 ]; then
+        echo "$text"
+        return
+    fi
+
+    for (( i=0; i<length; i++ )); do
+        t=$(awk "BEGIN { print $i / ($length - 1) }")
+        seg=$(awk "BEGIN { print int($t * 6) }")
+        local_t=$(awk "BEGIN { print ($t * 6) - $seg }")
+
+        if [ "$seg" -ge 6 ]; then
+            seg=5
+            local_t=1
+        fi
+
+        r1=${R[$seg]};   r2=${R[$((seg+1))]}
+        g1=${G[$seg]};   g2=${G[$((seg+1))]}
+        b1=${B[$seg]};   b2=${B[$((seg+1))]}
+
+        r=$(awk "BEGIN { printf \"%d\", (1 - $local_t) * $r1 + $local_t * $r2 }")
+        g=$(awk "BEGIN { printf \"%d\", (1 - $local_t) * $g1 + $local_t * $g2 }")
+        b=$(awk "BEGIN { printf \"%d\", (1 - $local_t) * $b1 + $local_t * $b2 }")
+
+        char="${text:$i:1}"
+        if [ "$wrap" = "1" ]; then
+            ansi="\[\033[38;2;${r};${g};${b}m\]${char}"
+        else
+            ansi="\033[38;2;${r};${g};${b}m${char}"
+        fi
+        result+="$ansi"
+    done
+
+    if [ "$wrap" = "1" ]; then
+        result+="\[\033[0m\]"  # reset
+    else
+        result+="\033[0m"
+    fi
+    echo "$result"
+}
+
+
+function set_terminal_title() {
     title=$@
     if [ -z "$BASH_SOURCE" ]; then
         echo "\[\033]0;${title}\007\]"
@@ -184,17 +236,18 @@ PromptTermTitle="${PromptUserName}@${PromptHostName}: ${PromptWorkingDirectory}"
 if [[ -n "$MSYSTEM" ]]; then
     PromptTermTitle="${MSYSTEM}: ${PromptWorkingDirectory}"
 fi
+PromptIdentity="$(get_rainbow_text $(whoami)@$(hostname))"
 
-export PS1="${debian_chroot:+($debian_chroot)}${Color_LightYellow}Bash ${Style_Bold}${Color_Green}${PromptUserName}@${PromptHostName}${Style_Off}:${Style_Bold}${Color_Blue}${PromptWorkingDirectory}${MSYSTEM:+ ${Color_Magenta}${MSYSTEM} }${Style_Off}${PromptSymbol} "
+export PS1="${debian_chroot:+($debian_chroot)}${Color_LightYellow}Bash ${Style_Bold}${PromptIdentity}${Style_Off} ${Style_Bold}${Color_Blue}${PromptWorkingDirectory}${MSYSTEM:+ ${Color_Magenta}${MSYSTEM} }${Style_Off}${PromptSymbol} "
 
 # cd with title
 TermUserName="${USER}"
 TermHostName="${HOSTNAME}"
 function cd() {
     builtin cd "$@"
-    SetTitle "${TermUserName}@${TermHostName}: $(pwd)"
+    set_terminal_title "${TermUserName}@${TermHostName}: $(pwd)"
 }
-SetTitle "${TermUserName}@${TermHostName}: $(pwd)"
+set_terminal_title "${TermUserName}@${TermHostName}: $(pwd)"
 
 # screen helpers
 function scr() {
@@ -251,10 +304,4 @@ function svr() {
     service_name=$1
     sudo service $service_name restart
 }
-
-function xpd() {
-    xpra start-desktop :111 --start=gnome-session --resize-display=1920x1080 --system-tray=no
-}
-export DISPLAY=:111
-
 
